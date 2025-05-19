@@ -18,7 +18,7 @@ export default function Home() {
     const message = useSelector((state: RootState) => state.reference.messages);
     const referenceValue = useSelector((state: RootState) => state.reference.data);
     const dispatch = useDispatch();
-    const isLight = true;
+    const isLight = false;
     
     useEffect(() => {
         console.log('worked');
@@ -51,24 +51,6 @@ export default function Home() {
                         }}>
                                 <CurrentValues/>
                                 <ReferenceForm/>
-                                <div className={classes.ReferenceForm}>
-                                    <div className={classes.Wrapper}>
-                                        <div className={classes.Container}>
-                                            <h1>Регулирование толщины покрытия</h1>
-                                                <div className={classes.RefContainer}>
-                                                    <span>Итоговая толщина</span>
-                                                    <Input placeholder='Толщина, мм' value=''></Input>
-                                                </div>
-                                                <div className={classes.RefContainer}>
-                                                    <span>Давление</span>
-                                                    <Input placeholder='Давление, Па' value=''></Input>
-                                                </div>
-                                                <Button>Подтвердить</Button>
-                                                <div className={classes.RefContainer}>
-                                                </div>
-                                        </div>
-                                    </div>
-                                </div>
                         </div>
                     </ContentLayout>
                 </div>

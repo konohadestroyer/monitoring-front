@@ -31,6 +31,9 @@ $main-color2: #171717;
     .Container {
         flex-direction: column;
     }
+        .Sensor {
+        background-color: $second-color2;
+    }
   }
 
 [data-theme="dark"] {
@@ -44,6 +47,9 @@ $main-color2: #171717;
 
     .Wrapper {
         background-color: $main-color;
+    }
+    .Sensor {
+        background-color: $main-color2;
     }
 }
 
@@ -69,7 +75,6 @@ $main-color2: #171717;
 
 .Sensor {
     width: 100%;
-    background-color: $second-color2;
     padding: 10px;
     border-radius: 4px;
 }

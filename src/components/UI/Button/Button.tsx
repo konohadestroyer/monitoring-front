@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import classes from './Button.module.scss';
+import React, { useState } from "react";
+import classes from "./Button.module.scss";
 
 interface ButtonProps {
     children: React.ReactNode;
@@ -21,9 +21,10 @@ export default function Button({
     const [isPressed, setIsPressed] = useState(false);
 
     const style: React.CSSProperties = {
+        ...sx,
         backgroundColor: backgroundColor,
         color: color,
-        filter: isPressed ? 'brightness(1)' : '',
+        filter: isPressed ? "brightness(1)" : "",
     };
 
     const handleMouseDown = () => {

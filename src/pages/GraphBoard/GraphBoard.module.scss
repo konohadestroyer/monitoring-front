@@ -1,6 +1,6 @@
 .App {
     display: flex;
-    flex-direction: row-reverse;
+    flex-direction: row;
     height: 100%;
     box-sizing: border-box;
     padding: 10px;
@@ -10,7 +10,11 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    margin-right: 7px;
-    //margin-left: 7px;
+    margin-left: 7px;
     gap: 7px;
+}
+
+.Item {
+    height: 100%;
+    flex: 0 0 calc(33% - 10px);
 }
