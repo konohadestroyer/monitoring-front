@@ -17,6 +17,7 @@ import Home from "./pages/Home/Home";
 import GraphBoard from "./pages/GraphBoard/GraphBoard";
 import Admin from "./pages/Admin/Admin";
 import Auth from "./pages/Auth/Auth";
+import OAuth2 from "./pages/OAuth2/OAuth2";
 
 function App() {
     const [client, setClient] = useState<Client | null>(null);
@@ -63,6 +64,7 @@ function App() {
                 <Route path="/graph" element={<GraphBoard />} />
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/login" element={<Auth />} />
+                <Route path="/login/oauth2" element={<OAuth2 />} />
             </Routes>
         </BrowserRouter>
     );

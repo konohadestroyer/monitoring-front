@@ -1,4 +1,4 @@
-import classes from "./Auth.module.scss";
+import classes from "./OAuth2.module.scss";
 import LeftBar from "../../components/LeftBar/LeftBar";
 import TopBar from "../../components/TopBar/TopBar";
 import ContentLayout from "../../components/ContentLayout/ContentLayout";
@@ -7,7 +7,7 @@ import { ReactEventHandler, useState } from "react";
 import Button from "../../components/UI/Button/Button";
 import axios from "axios";
 
-export default function Auth() {
+export default function OAuth2() {
     const [loginValue, setLoginValue] = useState("");
     const [passwordValue, setPasswordValue] = useState("");
 
@@ -19,13 +19,14 @@ export default function Auth() {
     };
 
     const sendToOauth = () => {
-        axios.post(
-            "http://localhost:9000/oauth2/authorize?response_type=code&client_id=client&scope=openid&redirect_uri=http://localhost:9000/oauth2/callback",
-            {
-                username: loginValue,
-                password: passwordValue,
+        axios.post("http://localhost:9000/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
             },
-        );
+            body: `username=${loginValue}&password=${passwordValue}`,
+            credentials: "include",
+        });
     };
 
     return (
@@ -47,21 +48,23 @@ export default function Auth() {
                                 <h1>
                                     Для продолжения необходимо авторизоваться
                                 </h1>
-                                <a
-                                    style={{
+                                <Input
+                                    value={loginValue}
+                                    onChange={loginHandler}
+                                    placeholder="Ваш логин"
+                                ></Input>
+                                <Input
+                                    value={passwordValue}
+                                    onChange={passwordHandler}
+                                    placeholder="Ваш пароль"
+                                ></Input>
+                                <Button
+                                    sx={{
                                         width: "100%",
-                                        textAlign: "center",
                                     }}
-                                    href="http://localhost:9000/oauth2/authorize?response_type=code&client_id=client&scope=openid&redirect_uri=http://localhost:9000/oauth2/callback"
                                 >
-                                    <Button
-                                        sx={{
-                                            width: "100%",
-                                        }}
-                                    >
-                                        Продолжить
-                                    </Button>
-                                </a>
+                                    Войти
+                                </Button>
                             </div>
                         </div>
                     </ContentLayout>
