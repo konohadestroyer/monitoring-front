@@ -1,4 +1,4 @@
-$main-color:#171717;
+$main-color: #171717;
 $second-color: #eeeeee;
 $button-color: #d4d4d4;
 
@@ -18,16 +18,21 @@ $button-color: #d4d4d4;
     }
 }
 
-.Button {
+.Sobaka {
     position: absolute;
     right: 25px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
 
+.Button {
     background: none;
     border: none;
     cursor: pointer;
     text-align: center;
     border-radius: 4px;
-    
+
     img {
         width: 25px;
         height: 25px;
@@ -39,7 +44,7 @@ $button-color: #d4d4d4;
         color: black;
         background-color: $second-color;
     }
-  }
+}
 
 [data-theme="dark"] {
     .TopBar {
@@ -52,4 +57,33 @@ $button-color: #d4d4d4;
     width: 40px;
     height: 40px;
     color: $button-color;
+}
+
+.SensorDropdown {
+    position: absolute;
+    top: 110%;
+    left: -100px;
+    background-color: #171717;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 0.5rem;
+    width: 300px;
+    z-index: 10;
+    border-radius: 0.5rem;
+    span {
+        white-space: nowrap;
+        font-size: 14px;
+    }
+}
+
+.DropCont {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.SensorItem {
+    padding: 0.25rem 0;
+    font-size: 0.7rem;
+    white-space: nowrap;
 }

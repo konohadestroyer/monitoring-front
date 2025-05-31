@@ -8,6 +8,7 @@ interface ButtonProps {
     onClick?: () => void;
     disabled?: boolean;
     sx?: React.CSSProperties;
+    type?: "button" | "reset" | "submit" | undefined;
 }
 
 export default function Button({
@@ -16,6 +17,7 @@ export default function Button({
     sx,
     backgroundColor,
     onClick,
+    type,
     disabled,
 }: ButtonProps) {
     const [isPressed, setIsPressed] = useState(false);
@@ -41,6 +43,7 @@ export default function Button({
 
     return (
         <button
+            type={type}
             disabled={disabled}
             onClick={onClick}
             style={style}

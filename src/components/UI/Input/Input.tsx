@@ -6,9 +6,15 @@ interface InputProps {
     value: string;
     placeholder?: string;
     currency?: string;
+    name?: string;
 }
 
-export default function Input({ onChange, value, placeholder }: InputProps) {
+export default function Input({
+    onChange,
+    value,
+    placeholder,
+    name,
+}: InputProps) {
     const [isHovered, setIsHovered] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
 
@@ -26,6 +32,7 @@ export default function Input({ onChange, value, placeholder }: InputProps) {
 
     return (
         <input
+            name={name}
             className={classes.Input}
             style={style}
             onFocus={focusHandler}

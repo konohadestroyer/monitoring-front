@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Input from "../UI/Input/Input";
 import classes from "./ReferenceForm.module.scss";
 import Button from "../UI/Button/Button";
@@ -8,8 +8,10 @@ import axios from "axios";
 import ReferenceValue from "./ReferenceValue/ReferenceValue";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
+import { TextField } from "@mui/material";
 
 export default function ReferenceForm() {
+    const socketRef = useRef<WebSocket | null>(null); // 👈 создаем ref
     const referenceValues = useSelector(
         (state: RootState) => state.reference.data,
     );
@@ -20,110 +22,164 @@ export default function ReferenceForm() {
     const [updateSent, setUpdateSent] = useState<boolean>(false);
 
     useEffect(() => {
-        const socket = new SockJS("http://localhost:8228/socket");
-        const client = new Client({
-            webSocketFactory: () => socket,
-            onConnect: () => {
-                console.log("WebSocket connected");
-            },
-            onStompError: (frame) => {
-                console.error("WebSocket error:", frame);
-            },
-        });
+        const token = localStorage.getItem("token");
+        const socket = new WebSocket(
+            `ws://localhost:8228/socket?token=${token}`,
+        );
 
-        client.activate();
-        setStompClient(client);
+        socketRef.current = socket;
 
-        return () => {
-            client.deactivate();
+        socket.onmessage = (event) => {
+            const msg = JSON.parse(event.data);
+            console.log("Update received:", msg);
         };
     }, []);
 
     const sendUpdate = (oldValue: string, newValue: string, id: string) => {
-        if (stompClient) {
-            const update = {
-                id: id,
-                oldValue: oldValue,
-                newValue: newValue,
+        if (
+            socketRef.current &&
+            socketRef.current.readyState === WebSocket.OPEN
+        ) {
+            const message = {
+                type: "reference/update",
+                data: {
+                    id,
+                    oldValue,
+                    newValue,
+                },
             };
-
-            stompClient.publish({
-                destination: "/app/reference/update",
-                body: JSON.stringify(update),
-                headers: {},
-            });
-            setUpdateSent(true);
-            setTimeout(() => {
-                setUpdateSent(false);
-            }, 2000);
+            socketRef.current.send(JSON.stringify(message));
+            console.log("Sent:", message);
         } else {
-            console.error("WebSocket клиент не подключен");
+            console.warn("WebSocket is not connected.");
         }
     };
 
+    const [search, setSearch] = useState("");
+
+    const filteredGraphs = referenceValues.filter((item) =>
+        item.name.toLowerCase().includes(search.toLowerCase()),
+    );
+
     return (
         <div className={classes.ReferenceForm}>
-            <div className={classes.Wrapper}>
-                <div className={classes.Container}>
-                    <h1>Эталонные значения</h1>
-                    {referenceValues.length !== 0
-                        ? referenceValues.map((item, index) => {
-                              return (
-                                  <div
-                                      key={index}
-                                      className={classes.RefContainer}
-                                  >
-                                      <ReferenceValue
-                                          isSent={updateSent}
-                                          name={item.name}
-                                          value={
-                                              inputValues[item.id] ??
-                                              item.reference.value
-                                          }
-                                          onChange={(newValue) =>
-                                              setInputValues((prev) => ({
-                                                  ...prev,
-                                                  [item.id]: newValue,
-                                              }))
-                                          }
-                                      />
-                                      <Button
-                                          onClick={() =>
-                                              sendUpdate(
-                                                  item.reference.value,
-                                                  inputValues[item.id] ??
-                                                      item.reference.value,
-                                                  item.reference.id,
-                                              )
-                                          }
-                                      >
-                                          Изменить
-                                      </Button>
-                                  </div>
-                              );
-                          })
-                        : null}
-                    <div className={classes.RefContainer}>
-                        <ReferenceValue
-                            isSent={updateSent}
-                            name={"barometr"}
-                            value={"40"}
-                        />
-                        <Button onClick={() => console.log("suck")}>
-                            Изменить
-                        </Button>
-                    </div>
-                    <div className={classes.RefContainer}>
-                        <ReferenceValue
-                            isSent={updateSent}
-                            name={"termometr"}
-                            value={"25"}
-                        />
-                        <Button onClick={() => console.log("suck")}>
-                            Изменить
-                        </Button>
-                    </div>
+            <h1>Эталонные значения</h1>
+            <div className={classes.Container}>
+                <TextField
+                    fullWidth
+                    label="Поиск по названию датчика"
+                    variant="outlined"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    sx={{
+                        input: {
+                            color: "white",
+                        },
+                        marginBottom: "1rem",
+                        "& .MuiFormLabel-root": {
+                            color: "white",
+                        },
+                        "& .MuiInputBase-root": {
+                            borderRadius: "12px",
+                            background: "#2a2929",
+                            "& fieldset": {
+                                borderRadius: "12px",
+                            },
+                            "&:hover fieldset": {
+                                borderColor: "white",
+                            },
+                            "&.Mui-focused fieldset": {
+                                borderColor: "white",
+                            },
+                        },
+                    }}
+                />
+                <div
+                    style={{
+                        display: "flex",
+                        gap: "10px",
+                        flexWrap: "wrap",
+                        height: "100%",
+                        maxHeight: "300px",
+                    }}
+                >
+                    {filteredGraphs.length > 0 ? (
+                        filteredGraphs.map((item, index) => (
+                            <div key={index} className={classes.RefContainer}>
+                                <ReferenceValue
+                                    isSent={updateSent}
+                                    name={item.name}
+                                    value={
+                                        inputValues[item.id] ??
+                                        item.reference.value
+                                    }
+                                    onChange={(newValue) =>
+                                        setInputValues((prev) => ({
+                                            ...prev,
+                                            [item.id]: newValue,
+                                        }))
+                                    }
+                                />
+                                <Button
+                                    sx={{
+                                        maxWidth: "none",
+                                    }}
+                                    onClick={() =>
+                                        sendUpdate(
+                                            String(item.reference.value),
+                                            inputValues[item.id] ??
+                                                item.reference.value,
+                                            item.reference.id,
+                                        )
+                                    }
+                                >
+                                    Изменить
+                                </Button>
+                            </div>
+                        ))
+                    ) : (
+                        <div>Нет совпадений</div>
+                    )}
                 </div>
+                {/* {referenceValues[0] !== undefined
+                    ? referenceValues.map((item, index) => {
+                          console.log(item);
+
+                          return (
+                              <div key={index} className={classes.RefContainer}>
+                                  <ReferenceValue
+                                      isSent={updateSent}
+                                      name={item.name}
+                                      value={
+                                          inputValues[item.id] ??
+                                          item.reference.value
+                                      }
+                                      onChange={(newValue) =>
+                                          setInputValues((prev) => ({
+                                              ...prev,
+                                              [item.id]: newValue,
+                                          }))
+                                      }
+                                  />
+                                  <Button
+                                      sx={{
+                                          maxWidth: "none",
+                                      }}
+                                      onClick={() =>
+                                          sendUpdate(
+                                              item.reference.value,
+                                              inputValues[item.id] ??
+                                                  item.reference.value,
+                                              item.reference.id,
+                                          )
+                                      }
+                                  >
+                                      Изменить
+                                  </Button>
+                              </div>
+                          );
+                      })
+                    : null} */}
             </div>
         </div>
     );

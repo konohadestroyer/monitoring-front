@@ -8,8 +8,103 @@ import TopBar from "../../components/TopBar/TopBar";
 import Button from "../../components/UI/Button/Button";
 import Input from "../../components/UI/Input/Input";
 import classes from "./Admin.module.scss";
+import { useSelector } from "react-redux";
+import { RootState } from "../../app/store";
+import { useState } from "react";
+import axios from "axios";
 
 export default function Admin() {
+    const [formData, setFormData] = useState({
+        sensorName: "",
+        referenceValue: "",
+        unit: "",
+        username: "",
+        password: "",
+        firstname: "",
+        lastname: "",
+    });
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    const createSensor = async () => {
+        const token = localStorage.getItem("token");
+        // reference: {
+        //     name: "Reference name",
+        //     value: formData.referenceValue,
+        // },
+        try {
+            const response = await axios.post(
+                "http://localhost:8228/sensor/create",
+                {
+                    name: formData.sensorName,
+                    type: formData.unit,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                },
+            );
+
+            console.log("Sensor created with ID:", response.data.id);
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                console.error(
+                    "Error creating sensor:",
+                    error.response?.data || error.message,
+                );
+            } else {
+                console.error("Unknown error:", (error as Error).message);
+            }
+        }
+    };
+
+    const createUser = async () => {
+        const token = localStorage.getItem("token"); // если нужна авторизация
+
+        const newUser = {
+            login: formData.username,
+            password: formData.password,
+            firstName: formData.firstname,
+            lastName: formData.lastname,
+            role: "8739f3fc-0403-4c85-9b90-1cbf5956bd1e",
+        };
+
+        try {
+            const response = await axios.post(
+                "http://localhost:9000/admin/create-user",
+                newUser,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json",
+                    },
+                },
+            );
+            console.log("User created successfully", response.status);
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                console.error(
+                    "Error creating user:",
+                    error.response?.data || error.message,
+                );
+            } else {
+                console.error("Unknown error:", (error as Error).message);
+            }
+        }
+    };
+
+    const referenceValues = useSelector(
+        (state: RootState) => state.reference.data,
+    );
+    const isCheckPressed = true;
     return (
         <>
             <div className={classes.Admin}>
@@ -22,76 +117,130 @@ export default function Admin() {
                                 display: "flex",
                                 gap: "10px",
                                 width: "100%",
+                                height: "590px",
+                                flexWrap: "wrap",
+                                justifyContent: "center",
                             }}
                         >
-                            <div className={classes.SensorForm}>
+                            <div
+                                className={`${classes.SensorForm} + ${classes.Item}`}
+                            >
                                 <div className={classes.Wrapper}>
                                     <div className={classes.Container}>
                                         <h1>Добавление датчиков</h1>
                                         <div className={classes.InputItem}>
                                             <Input
+                                                name="sensorName"
+                                                value={formData.sensorName}
                                                 placeholder="Название датчика"
-                                                value={""}
+                                                onChange={handleInputChange}
                                             ></Input>
                                         </div>
                                         <div className={classes.InputItem}>
                                             <Input
+                                                name="referenceValue"
+                                                value={formData.referenceValue}
                                                 placeholder="Эталонное значение"
-                                                value={""}
+                                                onChange={handleInputChange}
                                             ></Input>
                                         </div>
                                         <div className={classes.InputItem}>
                                             <Input
+                                                name="unit"
+                                                value={formData.unit}
                                                 placeholder="Единица измерения"
-                                                value={""}
+                                                onChange={handleInputChange}
                                             ></Input>
                                         </div>
-                                        <Button>Добавить датчик</Button>
+                                        <Button onClick={createSensor}>
+                                            Добавить датчик
+                                        </Button>
                                     </div>
                                 </div>
                             </div>
-                            <div className={classes.SensorForm}>
+                            <div
+                                className={`${classes.SensorForm} + ${classes.Item}`}
+                            >
                                 <div className={classes.Wrapper}>
                                     <div className={classes.Container}>
                                         <h1>Список датчиков</h1>
-                                        <div className={classes.Sensor}>
-                                            <div className={classes.Text}>
-                                                <span>Speed</span>
-                                                <span>20 м/с</span>
-                                            </div>
-                                            <Button>Удалить</Button>
-                                        </div>
-                                        <div className={classes.Sensor}>
-                                            <div className={classes.Text}>
-                                                <span>Termometr</span>
-                                                <span>35 C</span>
-                                            </div>
-                                            <Button>Удалить</Button>
-                                        </div>
-                                        <div className={classes.Sensor}>
-                                            <div className={classes.Text}>
-                                                <span>Barometr</span>
-                                                <span>40 Па</span>
-                                            </div>
-                                            <Button>Удалить</Button>
-                                        </div>
+                                        {referenceValues.length !== 0
+                                            ? referenceValues.map(
+                                                  (item, index) => {
+                                                      console.log(item);
+
+                                                      return (
+                                                          <div
+                                                              className={
+                                                                  classes.Sensor
+                                                              }
+                                                              key={index}
+                                                          >
+                                                              <div
+                                                                  className={
+                                                                      classes.Text
+                                                                  }
+                                                              >
+                                                                  <span>
+                                                                      {
+                                                                          item.name
+                                                                      }
+                                                                  </span>
+                                                                  <span>
+                                                                      {
+                                                                          item
+                                                                              .reference
+                                                                              .value
+                                                                      }
+                                                                  </span>
+                                                              </div>
+                                                              <Button>
+                                                                  Удалить
+                                                              </Button>
+                                                          </div>
+                                                      );
+                                                  },
+                                              )
+                                            : null}
                                     </div>
                                 </div>
                             </div>
-                            <div className={classes.SensorForm}>
+                            <div
+                                className={`${classes.SensorForm} + ${classes.Item}`}
+                            >
                                 <div className={classes.Wrapper}>
                                     <div className={classes.Container}>
                                         <h1>Создать пользователя</h1>
                                         <div className={classes.InputItem}>
                                             <Input
-                                                placeholder="Имя"
-                                                value={""}
+                                                name="username"
+                                                placeholder="Логин"
+                                                value={formData.username}
+                                                onChange={handleInputChange}
                                             ></Input>
                                         </div>
                                         <div className={classes.InputItem}>
                                             <Input
+                                                name="password"
                                                 placeholder="Пароль"
-                                                value={""}
+                                                value={formData.password}
+                                                onChange={handleInputChange}
+                                            ></Input>
+                                        </div>
+                                        <div className={classes.InputItem}>
+                                            <Input
+                                                name="firstname"
+                                                placeholder="Имя"
+                                                value={formData.firstname}
+                                                onChange={handleInputChange}
+                                            ></Input>
+                                        </div>
+                                        <div className={classes.InputItem}>
+                                            <Input
+                                                name="lastname"
+                                                placeholder="Фамилия"
+                                                value={formData.lastname}
+                                                onChange={handleInputChange}
                                             ></Input>
                                         </div>
                                         <FormControl
@@ -140,7 +289,9 @@ export default function Admin() {
                                                 </MenuItem>
                                             </Select>
                                         </FormControl>
-                                        <Button>Создать пользователя</Button>
+                                        <Button onClick={createUser}>
+                                            Создать пользователя
+                                        </Button>
                                     </div>
                                 </div>
                             </div>

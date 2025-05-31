@@ -52,7 +52,7 @@ export default function Auth() {
                                         width: "100%",
                                         textAlign: "center",
                                     }}
-                                    href="http://localhost:9000/oauth2/authorize?response_type=code&client_id=client&scope=openid&redirect_uri=http://localhost:9000/oauth2/callback"
+                                    href="http://localhost:9000/oauth2/authorize?response_type=code&client_id=client&scope=openid&redirect_uri=http://localhost:3000/oauth2/callback"
                                 >
                                     <Button
                                         sx={{

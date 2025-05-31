@@ -3,11 +3,11 @@ $second-color: #eee;
 $hover-button-color: #5f5f5f;
 
 .LeftBar {
-    display: flex; 
+    display: flex;
     border-radius: 6px;
     flex-direction: column;
     justify-content: start;
-    height: 100%;
+    height: calc(100vh - 15px);
     width: 80px;
     align-items: center;
     box-sizing: border-box;
@@ -31,7 +31,7 @@ $hover-button-color: #5f5f5f;
         filter: brightness(1.2);
         background-color: #f1f0f0;
     }
-  }
+}
 
 [data-theme="dark"] {
     .LeftBar {
@@ -58,7 +58,7 @@ $hover-button-color: #5f5f5f;
         width: 25px;
         height: 25px;
     }
-    
+
     .PngIcon {
         width: 30px;
         height: 30px;

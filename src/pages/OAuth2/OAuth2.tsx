@@ -3,7 +3,7 @@ import LeftBar from "../../components/LeftBar/LeftBar";
 import TopBar from "../../components/TopBar/TopBar";
 import ContentLayout from "../../components/ContentLayout/ContentLayout";
 import Input from "../../components/UI/Input/Input";
-import { ReactEventHandler, useState } from "react";
+import { ReactEventHandler, useRef, useState } from "react";
 import Button from "../../components/UI/Button/Button";
 import axios from "axios";
 
@@ -16,17 +16,6 @@ export default function OAuth2() {
     };
     const passwordHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPasswordValue(e.target.value);
-    };
-
-    const sendToOauth = () => {
-        axios.post("http://localhost:9000/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-            },
-            body: `username=${loginValue}&password=${passwordValue}`,
-            credentials: "include",
-        });
     };
 
     return (
@@ -48,23 +37,45 @@ export default function OAuth2() {
                                 <h1>
                                     Для продолжения необходимо авторизоваться
                                 </h1>
-                                <Input
-                                    value={loginValue}
-                                    onChange={loginHandler}
-                                    placeholder="Ваш логин"
-                                ></Input>
-                                <Input
-                                    value={passwordValue}
-                                    onChange={passwordHandler}
-                                    placeholder="Ваш пароль"
-                                ></Input>
-                                <Button
-                                    sx={{
-                                        width: "100%",
-                                    }}
+                                <form
+                                    action="http://localhost:9000/login"
+                                    method="POST"
                                 >
-                                    Войти
-                                </Button>
+                                    {/* Невидимые настоящие инпуты для отправки данных */}
+                                    <input
+                                        type="hidden"
+                                        name="username"
+                                        value={loginValue}
+                                    />
+                                    <input
+                                        type="hidden"
+                                        name="password"
+                                        value={passwordValue}
+                                    />
+
+                                    {/* Кастомные инпуты для UI */}
+                                    <Input
+                                        value={loginValue}
+                                        onChange={(e) =>
+                                            setLoginValue(e.target.value)
+                                        }
+                                        placeholder="Ваш логин"
+                                    />
+                                    <Input
+                                        value={passwordValue}
+                                        onChange={(e) =>
+                                            setPasswordValue(e.target.value)
+                                        }
+                                        placeholder="Ваш пароль"
+                                    />
+
+                                    <Button
+                                        sx={{ width: "100%" }}
+                                        type="submit" // или просто убрать onClick и сделать type=submit, а обработчик формы handleSubmit
+                                    >
+                                        Войти
+                                    </Button>
+                                </form>
                             </div>
                         </div>
                     </ContentLayout>

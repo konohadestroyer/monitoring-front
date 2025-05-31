@@ -32,4 +32,11 @@ $main-color: #2a2929;
     padding: 20px;
     color: white;
     min-width: 500px;
+
+    form {
+        display: flex;
+        flex-direction: column;
+        width: 50%;
+        gap: 20px;
+    }
 }

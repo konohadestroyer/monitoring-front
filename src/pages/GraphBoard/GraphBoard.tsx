@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import classes from "./GraphBoard.module.scss";
 import Graph from "../../components/Graph/Graph";
 import LeftBar from "../../components/LeftBar/LeftBar";
@@ -9,6 +9,7 @@ import { RootState } from "../../app/store";
 import CurrentValues from "../../components/CurrentValues/CurrentValues";
 import { setAlert } from "../../slices/referenceValueSlice";
 import Alert from "../../components/Alert/Alert";
+import { TextField } from "@mui/material";
 
 export default function GraphBoard() {
     const referenceValue = useSelector(
@@ -17,6 +18,8 @@ export default function GraphBoard() {
     const isAlert = useSelector((state: RootState) => state.reference.isAlert);
     const dispatch = useDispatch();
     const message = useSelector((state: RootState) => state.reference.messages);
+
+    const [search, setSearch] = useState("");
 
     useEffect(() => {
         console.log("worked");
@@ -44,6 +47,10 @@ export default function GraphBoard() {
 
     console.log(referenceValue);
 
+    const filteredGraphs = referenceValue.filter((item) =>
+        item.name.toLowerCase().includes(search.toLowerCase()),
+    );
+
     return (
         <>
             {isAlert ? <Alert /> : null}
@@ -52,55 +59,61 @@ export default function GraphBoard() {
                 <div className={classes.RightContainer}>
                     <TopBar />
                     <ContentLayout>
-                        <div
-                            style={{
-                                width: "100%",
-                                height: "100%",
-                            }}
-                        >
+                        <div style={{ padding: "1rem", width: "100%" }}>
+                            <TextField
+                                fullWidth
+                                label="Поиск по названию графика"
+                                variant="outlined"
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                sx={{
+                                    input: {
+                                        color: "white",
+                                    },
+                                    marginBottom: "1rem",
+                                    "& .MuiFormLabel-root": {
+                                        color: "white",
+                                    },
+                                    "& .MuiInputBase-root": {
+                                        borderRadius: "12px",
+                                        background: "#2a2929",
+                                        "& fieldset": {
+                                            borderRadius: "12px",
+                                        },
+                                        "&:hover fieldset": {
+                                            borderColor: "white",
+                                        },
+                                        "&.Mui-focused fieldset": {
+                                            borderColor: "white",
+                                        },
+                                    },
+                                }}
+                            />
                             <div
                                 style={{
                                     display: "flex",
                                     gap: "10px",
                                     flexWrap: "wrap",
                                     height: "100%",
-                                    maxHeight: "500px",
+                                    maxHeight: "300px",
                                 }}
                             >
-                                {/* {referenceValue.map((item, index) => {
-                                    return <Graph key={index} name={item.name} id={item.id} reference={item.reference.value}/>
-                                })} */}
-                                <div className={classes.Item}>
-                                    <Graph
-                                        name="speed"
-                                        id="lol"
-                                        reference="20"
-                                        testdata={["1", "12", "40"]}
-                                    />
-                                </div>
-                                <div className={classes.Item}>
-                                    <Graph
-                                        name="termometr"
-                                        id="suka"
-                                        reference="35"
-                                    />
-                                </div>
-                                <div className={classes.Item}>
-                                    <Graph
-                                        name="barometr"
-                                        id="lol"
-                                        reference="40"
-                                        testdata={["34", "12", "40"]}
-                                    />
-                                </div>
-                                <div className={classes.Item}>
-                                    <Graph
-                                        name="barometr"
-                                        id="lol"
-                                        reference="40"
-                                        testdata={["34", "12", "40"]}
-                                    />
-                                </div>
+                                {filteredGraphs.length > 0 ? (
+                                    filteredGraphs.map((item, index) => (
+                                        <div
+                                            key={index}
+                                            className={classes.Item}
+                                        >
+                                            <Graph
+                                                name={item.name}
+                                                id={item.id}
+                                                reference={item.reference.value}
+                                            />
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div>Нет совпадений</div>
+                                )}
                             </div>
                         </div>
                     </ContentLayout>

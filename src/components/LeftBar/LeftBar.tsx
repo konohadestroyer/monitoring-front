@@ -8,6 +8,7 @@ import graphIconLight from "./img/graphLight.png";
 import adminIconLight from "./img/adminLight.png";
 import bellLight from "./img/bellLight.png";
 import loginIcon from "./img/loginIcon.png";
+import techIcon from "./img/tech.png";
 
 function LeftBar() {
     const isLight = false;
@@ -57,8 +58,11 @@ function LeftBar() {
                         className={classes.PngIcon}
                     />
                 </a>
+                <a className={classes.Button} href="/process">
+                    <img src={techIcon} className={classes.PngIcon} />
+                </a>
             </div>
-            <a className={classes.Button} href="/login">
+            <a className={classes.Button} href="/auth">
                 <img src={loginIcon} className={classes.PngIcon} />
             </a>
         </div>

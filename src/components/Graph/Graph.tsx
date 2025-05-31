@@ -155,9 +155,15 @@ export default function Graph({ name, id, reference, testdata }: GraphProps) {
         [xData, yData, name, zoom],
     );
 
+    const token = localStorage.getItem("token");
+
     useEffect(() => {
         axios
-            .get<ApiResponse[]>("http://localhost:8228/sensor/all-sensors")
+            .get<ApiResponse[]>("http://localhost:8228/sensor/all-sensors", {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
             .then((response) => {
                 const sensor = response.data.find((item) => item.name === name);
                 if (!sensor) {
