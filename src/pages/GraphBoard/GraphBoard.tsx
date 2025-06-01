@@ -28,25 +28,34 @@ export default function GraphBoard() {
             const refValues = referenceValue.reduce<{
                 [key: string]: { val: string; name: string };
             }>((acc, item) => {
-                acc[item.id] = { val: item.reference.value, name: item.name };
+                // Проверяем, есть ли поле reference и reference.value
+                if (item.reference && item.reference.value) {
+                    acc[item.id] = {
+                        val: item.reference.value,
+                        name: item.name,
+                    };
+                } else {
+                    acc[item.id] = { val: "Нет данных", name: item.name }; // Значение по умолчанию
+                }
                 return acc;
             }, {});
 
             console.log(refValues);
 
-            if (refValues[message.id].val !== message.value) {
+            // Если пришедшее сообщение не совпадает с текущим значением, показываем alert
+            if (refValues[message.id]?.val !== message.value) {
                 dispatch(
                     setAlert({
                         isOn: true,
-                        sensor: refValues[message.id].name,
+                        sensor:
+                            refValues[message.id]?.name || "Неизвестный датчик",
                     }),
                 );
             }
         }
-    }, [message]);
+    }, [message, referenceValue, dispatch]);
 
-    console.log(referenceValue);
-
+    // Фильтруем графики по поисковому запросу
     const filteredGraphs = referenceValue.filter((item) =>
         item.name.toLowerCase().includes(search.toLowerCase()),
     );
@@ -107,7 +116,10 @@ export default function GraphBoard() {
                                             <Graph
                                                 name={item.name}
                                                 id={item.id}
-                                                reference={item.reference.value}
+                                                reference={
+                                                    item.reference?.value ||
+                                                    "Нет данных"
+                                                } // Проверка на наличие reference
                                             />
                                         </div>
                                     ))

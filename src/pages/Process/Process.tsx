@@ -6,9 +6,42 @@ import Alert from "../../components/Alert/Alert";
 import { useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import techPic from "./img/techprocess.png";
+import { useEffect, useState } from "react";
 
 export default function Process() {
     const isAlert = useSelector((state: RootState) => state.reference.isAlert);
+    const sensors = useSelector((state: RootState) => state.reference.data);
+    const message = useSelector((state: RootState) => state.reference.messages);
+    const [actualValues, setActualValues] = useState({
+        first: "",
+        second: "",
+        third: "",
+        fourth: "",
+        fifth: "",
+    });
+
+    useEffect(() => {
+        if (message) {
+            // Получаем нужное значение из message (например, по id или name)
+            const newValues = { ...actualValues };
+
+            // Пример, как можно обновить значения на основе id или name сообщения
+            // Можно добавить больше условий в зависимости от того, что приходит в message
+            if (message.id === "sensor_id_1") {
+                newValues.first = message.value;
+            } else if (message.id === "sensor_id_2") {
+                newValues.second = message.value;
+            } else if (message.id === "sensor_id_3") {
+                newValues.third = message.value;
+            } else if (message.id === "sensor_id_4") {
+                newValues.fourth = message.value;
+            } else if (message.id === "sensor_id_5") {
+                newValues.fifth = message.value;
+            }
+
+            setActualValues(newValues); // Обновляем состояние с новыми значениями
+        }
+    }, [message]); // Эффект срабатывает при изменении message
 
     return (
         <>
@@ -27,11 +60,21 @@ export default function Process() {
                                 Технологический процесс
                             </h1>
                             <img src={techPic} />
-                            <span className={classes.First}>20 мм</span>
-                            <span className={classes.Second}>65 ℃</span>
-                            <span className={classes.Third}>14 о/мин</span>
-                            <span className={classes.Fourth}>15 МПа</span>
-                            <span className={classes.Fifth}>28 ℃</span>
+                            <span className={classes.First}>
+                                {actualValues.first} мм
+                            </span>
+                            <span className={classes.Second}>
+                                {actualValues.second} ℃
+                            </span>
+                            <span className={classes.Third}>
+                                {actualValues.third} о/мин
+                            </span>
+                            <span className={classes.Fourth}>
+                                {actualValues.fourth} МПа
+                            </span>
+                            <span className={classes.Fifth}>
+                                {actualValues.fifth} ℃
+                            </span>
                         </div>
                     </ContentLayout>
                 </div>

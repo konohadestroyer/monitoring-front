@@ -1,7 +1,6 @@
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import Alert from "../../components/Alert/Alert";
 import ContentLayout from "../../components/ContentLayout/ContentLayout";
-import CurrentValues from "../../components/CurrentValues/CurrentValues";
 import LeftBar from "../../components/LeftBar/LeftBar";
 import ReferenceForm from "../../components/ReferenceForm/ReferenceForm";
 import TopBar from "../../components/TopBar/TopBar";
@@ -34,10 +33,6 @@ export default function Admin() {
 
     const createSensor = async () => {
         const token = localStorage.getItem("token");
-        // reference: {
-        //     name: "Reference name",
-        //     value: formData.referenceValue,
-        // },
         try {
             const response = await axios.post(
                 "http://localhost:8228/sensor/create",
@@ -104,7 +99,7 @@ export default function Admin() {
     const referenceValues = useSelector(
         (state: RootState) => state.reference.data,
     );
-    const isCheckPressed = true;
+
     return (
         <>
             <div className={classes.Admin}>
@@ -164,44 +159,45 @@ export default function Admin() {
                                 <div className={classes.Wrapper}>
                                     <div className={classes.Container}>
                                         <h1>Список датчиков</h1>
-                                        {referenceValues.length !== 0
-                                            ? referenceValues.map(
-                                                  (item, index) => {
-                                                      console.log(item);
+                                        {referenceValues.length !== 0 ? (
+                                            referenceValues.map(
+                                                (item, index) => {
+                                                    // Проверка на наличие поля reference и reference.value
+                                                    const referenceValue =
+                                                        item.reference?.value ||
+                                                        "Нет данных";
 
-                                                      return (
-                                                          <div
-                                                              className={
-                                                                  classes.Sensor
-                                                              }
-                                                              key={index}
-                                                          >
-                                                              <div
-                                                                  className={
-                                                                      classes.Text
-                                                                  }
-                                                              >
-                                                                  <span>
-                                                                      {
-                                                                          item.name
-                                                                      }
-                                                                  </span>
-                                                                  <span>
-                                                                      {
-                                                                          item
-                                                                              .reference
-                                                                              .value
-                                                                      }
-                                                                  </span>
-                                                              </div>
-                                                              <Button>
-                                                                  Удалить
-                                                              </Button>
-                                                          </div>
-                                                      );
-                                                  },
-                                              )
-                                            : null}
+                                                    return (
+                                                        <div
+                                                            className={
+                                                                classes.Sensor
+                                                            }
+                                                            key={index}
+                                                        >
+                                                            <div
+                                                                className={
+                                                                    classes.Text
+                                                                }
+                                                            >
+                                                                <span>
+                                                                    {item.name}
+                                                                </span>
+                                                                <span>
+                                                                    {
+                                                                        referenceValue
+                                                                    }
+                                                                </span>
+                                                            </div>
+                                                            <Button>
+                                                                Удалить
+                                                            </Button>
+                                                        </div>
+                                                    );
+                                                },
+                                            )
+                                        ) : (
+                                            <div>Нет датчиков</div>
+                                        )}
                                     </div>
                                 </div>
                             </div>

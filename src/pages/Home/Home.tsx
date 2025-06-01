@@ -1,17 +1,13 @@
 import React, { useEffect } from "react";
 import classes from "./Home.module.scss";
 import ReferenceForm from "../../components/ReferenceForm/ReferenceForm";
-import Graph from "../../components/Graph/Graph";
 import LeftBar from "../../components/LeftBar/LeftBar";
 import TopBar from "../../components/TopBar/TopBar";
 import ContentLayout from "../../components/ContentLayout/ContentLayout";
-import CurrentValues from "../../components/CurrentValues/CurrentValues";
-import Alert from "../../components/Alert/Alert";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../app/store";
 import { setAlert } from "../../slices/referenceValueSlice";
-import Input from "../../components/UI/Input/Input";
-import Button from "../../components/UI/Button/Button";
+import Alert from "../../components/Alert/Alert";
 
 export default function Home() {
     const isAlert = useSelector((state: RootState) => state.reference.isAlert);
@@ -20,29 +16,41 @@ export default function Home() {
         (state: RootState) => state.reference.data,
     );
     const dispatch = useDispatch();
-    const isLight = false;
 
     useEffect(() => {
         console.log("worked");
 
         if (message) {
+            // Обработка отсутствия поля `reference` в данных
             const refValues = referenceValue.reduce<{
                 [key: string]: { val: string; name: string };
             }>((acc, item) => {
-                acc[item.id] = { val: item.reference.value, name: item.name };
+                // Проверка на наличие поля reference и reference.value
+                if (item.reference && item.reference.value) {
+                    acc[item.id] = {
+                        val: item.reference.value,
+                        name: item.name,
+                    };
+                } else {
+                    acc[item.id] = { val: "Нет данных", name: item.name }; // Значение по умолчанию
+                }
                 return acc;
             }, {});
 
-            if (refValues[message.id].val !== message.value) {
+            console.log(refValues);
+
+            // Если пришедшее сообщение не совпадает с текущим значением, показываем alert
+            if (refValues[message.id]?.val !== message.value) {
                 dispatch(
                     setAlert({
                         isOn: true,
-                        sensor: refValues[message.id].name,
+                        sensor:
+                            refValues[message.id]?.name || "Неизвестный датчик", // В случае отсутствия имени
                     }),
                 );
             }
         }
-    }, [message]);
+    }, [message, referenceValue, dispatch]);
 
     return (
         <>

@@ -1,28 +1,29 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { Journal } from '../components/Graph/Graph';
+import { createSlice } from "@reduxjs/toolkit";
+import { Journal } from "../components/Graph/Graph";
 
 interface ReferenceValueState {
-    data: ReferenceValueInterface[],
-    messages: Journal | null,
-    isAlert: boolean,
-    alertMessage: string,
+    data: ReferenceValueInterface[];
+    messages: Journal | null;
+    isAlert: boolean;
+    alertMessage: string;
 }
 
 interface ReferenceValueInterface {
-    id: string,
-    reference: { value: string, id: string },
-    name: string,
+    id: string;
+    reference: { value: string; id: string };
+    name: string;
+    journal: Journal;
 }
 
 const initialState: ReferenceValueState = {
     data: [],
     messages: null,
     isAlert: false,
-    alertMessage: '',
-}
+    alertMessage: "",
+};
 
 const referenceValueSlice = createSlice({
-    name: 'referenceValue',
+    name: "referenceValue",
     initialState,
     reducers: {
         setReferenceValues: (state, action) => {
@@ -34,13 +35,10 @@ const referenceValueSlice = createSlice({
         setAlert: (state, action) => {
             state.isAlert = action.payload.isOn;
             state.alertMessage = action.payload.sensor;
-        }
-    }
-})
+        },
+    },
+});
 
-export const {
-    setReferenceValues,
-    setMessages,
-    setAlert,
-} = referenceValueSlice.actions;
+export const { setReferenceValues, setMessages, setAlert } =
+    referenceValueSlice.actions;
 export default referenceValueSlice.reducer;
