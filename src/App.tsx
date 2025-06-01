@@ -47,7 +47,7 @@ function App() {
             sensors.forEach((sensor) => {
                 const subscribeMessage = {
                     action: "subscribe", // Тип сообщения для подписки
-                    topic: `/topic/journal${sensor.id}`, // ID датчика - это топик
+                    topic: `/topic/journal/${sensor.id}`, // ID датчика - это топик
                 };
 
                 socket.send(JSON.stringify(subscribeMessage));
