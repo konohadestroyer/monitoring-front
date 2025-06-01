@@ -101,7 +101,7 @@ export default function Graph({ name, id, reference, testdata }: GraphProps) {
             },
             xAxis: {
                 type: "category",
-                data: testXData,
+                data: xData,
                 axisLine: { lineStyle: { color: theme } },
                 axisLabel: { color: theme },
             },
@@ -129,7 +129,7 @@ export default function Graph({ name, id, reference, testdata }: GraphProps) {
                 {
                     name,
                     type: "line",
-                    data: testdata ?? testYData,
+                    data: yData,
                     showSymbol: false,
                     lineStyle: { color: "#08C400", width: 2 },
                     emphasis: { focus: "series" },
@@ -141,7 +141,7 @@ export default function Graph({ name, id, reference, testdata }: GraphProps) {
                 {
                     name: "Reference",
                     type: "line",
-                    data: testReferenceLineData,
+                    data: referenceLineData,
                     showSymbol: false,
                     lineStyle: { color: "red", width: 2 },
                     emphasis: { focus: "series" },
@@ -193,6 +193,10 @@ export default function Graph({ name, id, reference, testdata }: GraphProps) {
                 console.error("Ошибка при загрузке данных:", err);
             });
     }, [name]);
+
+    useEffect(() => {
+        console.log("Journal for", name, journal);
+    }, [journal]); // Проверяем, есть ли данные для каждого графика
 
     useEffect(() => {
         const interval = setInterval(() => {

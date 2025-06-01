@@ -34,6 +34,7 @@ function OAuth2Callback() {
                     console.log("Access Token:", res.data.access_token);
                     localStorage.setItem("token", res.data.access_token);
                     navigate("/");
+                    window.location.reload();
                 })
                 .catch((err) => {
                     console.error("Ошибка получения токена:", err);
