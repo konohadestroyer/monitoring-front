@@ -177,13 +177,13 @@ export default function Admin() {
                                     </div>
                                 </div>
                             </div>
-                            <div
+                            {/* <div
                                 className={`${classes.SensorForm} + ${classes.Item}`}
                             >
                                 <div className={classes.Wrapper}>
                                     <h1>Редактирование пользователя</h1>
                                 </div>
-                            </div>
+                            </div> */}
                             <div
                                 className={`${classes.SensorForm} + ${classes.Item}`}
                             >
