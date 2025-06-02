@@ -21,6 +21,8 @@ export default function GraphBoard() {
 
     const [search, setSearch] = useState("");
 
+    console.log(referenceValue);
+
     useEffect(() => {
         console.log("worked");
 

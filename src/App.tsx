@@ -58,12 +58,16 @@ function App() {
         socket.onmessage = (event) => {
             const msg = JSON.parse(event.data);
             console.log("Received:", msg);
+            const date = new Date(msg.time);
 
+            // Преобразуем в строку с нужным форматом
+            const formattedDate = date.toLocaleString();
             dispatch(
-                setMessages((prevMessages: Journal[]) => [
-                    ...prevMessages,
-                    msg,
-                ]),
+                setMessages({
+                    id: msg.id,
+                    value: msg.value,
+                    time: formattedDate,
+                }),
             );
         };
 

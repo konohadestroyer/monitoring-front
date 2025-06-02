@@ -31,6 +31,8 @@ function OAuth2Callback() {
                     },
                 )
                 .then((res) => {
+                    console.log(res);
+
                     console.log("Access Token:", res.data.access_token);
                     localStorage.setItem("token", res.data.access_token);
                     navigate("/");

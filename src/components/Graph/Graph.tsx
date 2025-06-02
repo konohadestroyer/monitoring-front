@@ -25,6 +25,8 @@ interface GraphProps {
 
 export default function Graph({ name, id, reference, testdata }: GraphProps) {
     const message = useSelector((state: RootState) => state.reference.messages);
+    console.log(message);
+
     const [journal, setJournal] = useState<Journal[]>([]);
     const [zoom, setZoom] = useState<{
         startValue?: string;
@@ -62,8 +64,13 @@ export default function Graph({ name, id, reference, testdata }: GraphProps) {
     }, []);
 
     useEffect(() => {
+        console.log("effect worked");
+        console.log(message.id, id);
+
         if (!message) return;
         if (message.id === id) {
+            console.log("new mess", message.id);
+
             setJournal((prev) => {
                 const newEntry: Journal = {
                     [name]: message.value,
@@ -157,46 +164,55 @@ export default function Graph({ name, id, reference, testdata }: GraphProps) {
 
     const token = localStorage.getItem("token");
 
-    useEffect(() => {
-        axios
-            .get<ApiResponse[]>("http://localhost:8228/sensor/all-sensors", {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            })
-            .then((response) => {
-                const sensor = response.data.find((item) => item.name === name);
-                if (!sensor) {
-                    setJournal([]);
-                    return;
-                }
-                const journalData: Journal[] = sensor.journal.map((item) => {
-                    return {
-                        [name]: item.value,
-                        time: item.time.split("T")[1].split(".")[0],
-                    };
-                });
-                setJournal(journalData);
+    // useEffect(() => {
+    //     axios
+    //         .get<ApiResponse[]>("http://localhost:8228/sensor/all-sensors", {
+    //             headers: {
+    //                 Authorization: `Bearer ${token}`,
+    //             },
+    //         })
+    //         .then((response) => {
+    //             const sensor = response.data.find((item) => item.name === name);
+    //             if (!sensor) {
+    //                 setJournal([]);
+    //                 return;
+    //             }
+    //             const journalData: Journal[] = sensor.journal.map((item) => {
+    //                 return {
+    //                     [name]: item.value,
+    //                     time: item.time.split("T")[1].split(".")[0],
+    //                 };
+    //             });
+    //             setJournal(journalData);
 
-                if (journalData.length > 0) {
-                    const len = journalData.length;
-                    const windowSize = 50;
-                    const startIndex = Math.max(0, len - windowSize);
-                    setZoom({
-                        startValue: journalData[startIndex].time,
-                        endValue: journalData[len - 1].time,
-                    });
-                    setIsAutoScroll(true);
-                }
-            })
-            .catch((err) => {
-                console.error("Ошибка при загрузке данных:", err);
+    //             if (journalData.length > 0) {
+    //                 const len = journalData.length;
+    //                 const windowSize = 50;
+    //                 const startIndex = Math.max(0, len - windowSize);
+    //                 setZoom({
+    //                     startValue: journalData[startIndex].time,
+    //                     endValue: journalData[len - 1].time,
+    //                 });
+    //                 setIsAutoScroll(true);
+    //             }
+    //         })
+    //         .catch((err) => {
+    //             console.error("Ошибка при загрузке данных:", err);
+    //         });
+    // }, [name]);
+
+    useEffect(() => {
+        if (journal.length > 0) {
+            const len = journal.length;
+            const windowSize = 50;
+            const startIndex = Math.max(0, len - windowSize);
+            setZoom({
+                startValue: journal[startIndex].time,
+                endValue: journal[len - 1].time,
             });
+            setIsAutoScroll(true);
+        }
     }, [name]);
-
-    useEffect(() => {
-        console.log("Journal for", name, journal);
-    }, [journal]); // Проверяем, есть ли данные для каждого графика
 
     useEffect(() => {
         const interval = setInterval(() => {

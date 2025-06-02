@@ -3,7 +3,7 @@ import { Journal } from "../components/Graph/Graph";
 
 interface ReferenceValueState {
     data: ReferenceValueInterface[];
-    messages: Journal | null;
+    messages: Journal;
     isAlert: boolean;
     alertMessage: string;
 }
@@ -17,7 +17,9 @@ interface ReferenceValueInterface {
 
 const initialState: ReferenceValueState = {
     data: [],
-    messages: null,
+    messages: {
+        time: "",
+    },
     isAlert: false,
     alertMessage: "",
 };
@@ -30,7 +32,11 @@ const referenceValueSlice = createSlice({
             state.data = action.payload;
         },
         setMessages: (state, action) => {
-            state.messages = action.payload;
+            const { id, value, time } = action.payload;
+            // Обновляем или добавляем новое сообщение в объект messages с ключом id
+            state.messages.id = id;
+            state.messages.value = value;
+            state.messages.time = time;
         },
         setAlert: (state, action) => {
             state.isAlert = action.payload.isOn;

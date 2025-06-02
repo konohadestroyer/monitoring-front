@@ -111,7 +111,7 @@ export default function ReferenceForm() {
                                     name={item.name}
                                     value={
                                         inputValues[item.id] ??
-                                        item.reference.value
+                                        item.reference?.value
                                     }
                                     onChange={(newValue) =>
                                         setInputValues((prev) => ({

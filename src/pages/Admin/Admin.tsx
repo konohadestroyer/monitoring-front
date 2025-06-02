@@ -1,4 +1,12 @@
-import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
+import {
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Select,
+    Checkbox,
+    ListItemText,
+    SelectChangeEvent,
+} from "@mui/material";
 import Alert from "../../components/Alert/Alert";
 import ContentLayout from "../../components/ContentLayout/ContentLayout";
 import LeftBar from "../../components/LeftBar/LeftBar";
@@ -13,6 +21,7 @@ import { useState } from "react";
 import axios from "axios";
 
 export default function Admin() {
+    const sensors = useSelector((state: RootState) => state.reference.data);
     const [formData, setFormData] = useState({
         sensorName: "",
         referenceValue: "",
@@ -21,6 +30,7 @@ export default function Admin() {
         password: "",
         firstname: "",
         lastname: "",
+        selectedSensors: [] as string[], // добавлено состояние для выбранных датчиков
     });
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,6 +38,21 @@ export default function Admin() {
         setFormData((prev) => ({
             ...prev,
             [name]: value,
+        }));
+    };
+
+    const handleSensorChange = (
+        event: SelectChangeEvent<string[]>, // Используем SelectChangeEvent для Select с множественным выбором
+    ) => {
+        const { value } = event.target; // Получаем value, которое является массивом строк
+
+        // Проверяем, что value всегда массив строк
+        const selectedSensors = Array.isArray(value) ? value : [value];
+
+        // Обновляем выбранные датчики в state
+        setFormData((prev) => ({
+            ...prev,
+            selectedSensors, // Прямо используем значение, оно всегда будет string[]
         }));
     };
 
@@ -60,6 +85,7 @@ export default function Admin() {
             }
         }
     };
+    console.log(formData.selectedSensors);
 
     const createUser = async () => {
         const token = localStorage.getItem("token"); // если нужна авторизация
@@ -70,6 +96,8 @@ export default function Admin() {
             firstName: formData.firstname,
             lastName: formData.lastname,
             role: "8739f3fc-0403-4c85-9b90-1cbf5956bd1e",
+            // добавляем выбранные датчики в запрос, если это нужно
+            selectedSensors: formData.selectedSensors,
         };
 
         try {
@@ -95,10 +123,6 @@ export default function Admin() {
             }
         }
     };
-
-    const referenceValues = useSelector(
-        (state: RootState) => state.reference.data,
-    );
 
     return (
         <>
@@ -157,55 +181,19 @@ export default function Admin() {
                                 className={`${classes.SensorForm} + ${classes.Item}`}
                             >
                                 <div className={classes.Wrapper}>
-                                    <div className={classes.Container}>
-                                        <h1>Список датчиков</h1>
-                                        {referenceValues.length !== 0 ? (
-                                            referenceValues.map(
-                                                (item, index) => {
-                                                    // Проверка на наличие поля reference и reference.value
-                                                    const referenceValue =
-                                                        item.reference?.value ||
-                                                        "Нет данных";
-
-                                                    return (
-                                                        <div
-                                                            className={
-                                                                classes.Sensor
-                                                            }
-                                                            key={index}
-                                                        >
-                                                            <div
-                                                                className={
-                                                                    classes.Text
-                                                                }
-                                                            >
-                                                                <span>
-                                                                    {item.name}
-                                                                </span>
-                                                                <span>
-                                                                    {
-                                                                        referenceValue
-                                                                    }
-                                                                </span>
-                                                            </div>
-                                                            <Button>
-                                                                Удалить
-                                                            </Button>
-                                                        </div>
-                                                    );
-                                                },
-                                            )
-                                        ) : (
-                                            <div>Нет датчиков</div>
-                                        )}
-                                    </div>
+                                    <h1>Редактирование пользователя</h1>
                                 </div>
                             </div>
                             <div
                                 className={`${classes.SensorForm} + ${classes.Item}`}
                             >
                                 <div className={classes.Wrapper}>
-                                    <div className={classes.Container}>
+                                    <div
+                                        className={classes.Container}
+                                        style={{
+                                            maxWidth: "500px",
+                                        }}
+                                    >
                                         <h1>Создать пользователя</h1>
                                         <div className={classes.InputItem}>
                                             <Input
@@ -244,7 +232,8 @@ export default function Admin() {
                                             sx={{
                                                 "& .MuiOutlinedInput-root": {
                                                     backgroundColor: "#171717",
-                                                    color: "grey", // цвет текста внутри Select
+                                                    color: "white", // цвет текста внутри Select
+                                                    textWrap: "wrap",
                                                     "& fieldset": {
                                                         borderColor: "#171717", // цвет границы
                                                         borderWidth: "2px",
@@ -266,23 +255,62 @@ export default function Admin() {
                                             }}
                                         >
                                             <InputLabel id="demo-simple-select-label">
-                                                Age
+                                                Разрешенные датчики
                                             </InputLabel>
                                             <Select
                                                 labelId="demo-simple-select-label"
                                                 id="demo-simple-select"
-                                                value={10}
-                                                label="Age"
+                                                multiple
+                                                value={formData.selectedSensors}
+                                                onChange={handleSensorChange}
+                                                renderValue={(selected) => {
+                                                    const selectedNames =
+                                                        selected.map(
+                                                            (id: string) => {
+                                                                const sensor =
+                                                                    sensors.find(
+                                                                        (
+                                                                            sensor,
+                                                                        ) =>
+                                                                            sensor.id ===
+                                                                            id,
+                                                                    );
+                                                                return sensor
+                                                                    ? sensor.name
+                                                                    : "";
+                                                            },
+                                                        );
+                                                    return selectedNames.join(
+                                                        ", ",
+                                                    );
+                                                }}
                                             >
-                                                <MenuItem value={10}>
-                                                    Разрешенные датчики
-                                                </MenuItem>
-                                                <MenuItem value={20}>
-                                                    Termometr
-                                                </MenuItem>
-                                                <MenuItem value={30}>
-                                                    Barometr
-                                                </MenuItem>
+                                                {sensors.length !== 0
+                                                    ? sensors.map((sensor) => (
+                                                          <MenuItem
+                                                              sx={{
+                                                                  "& span": {
+                                                                      color: "black !important",
+                                                                  },
+                                                              }}
+                                                              key={sensor.id}
+                                                              value={sensor.id}
+                                                          >
+                                                              <Checkbox
+                                                                  checked={
+                                                                      formData.selectedSensors.indexOf(
+                                                                          sensor.id,
+                                                                      ) > -1
+                                                                  }
+                                                              />
+                                                              <ListItemText
+                                                                  primary={
+                                                                      sensor.name
+                                                                  }
+                                                              />
+                                                          </MenuItem>
+                                                      ))
+                                                    : null}
                                             </Select>
                                         </FormControl>
                                         <Button onClick={createUser}>

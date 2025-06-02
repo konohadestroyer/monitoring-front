@@ -27,15 +27,15 @@ export default function Process() {
 
             // Пример, как можно обновить значения на основе id или name сообщения
             // Можно добавить больше условий в зависимости от того, что приходит в message
-            if (message.id === "sensor_id_1") {
+            if (message.id === "36574620-1278-49cb-9dcf-fd2a34148aa2") {
                 newValues.first = message.value;
-            } else if (message.id === "sensor_id_2") {
+            } else if (message.id === "1087010f-5f88-40a9-b7d0-dbaeb3ab3a2a") {
                 newValues.second = message.value;
-            } else if (message.id === "sensor_id_3") {
+            } else if (message.id === "3c703a09-0889-44d6-949b-0996732470d2") {
                 newValues.third = message.value;
-            } else if (message.id === "sensor_id_4") {
+            } else if (message.id === "976b3741-2f02-48fc-988c-53d86e3338fe") {
                 newValues.fourth = message.value;
-            } else if (message.id === "sensor_id_5") {
+            } else if (message.id === "59f6f71b-3ede-4c63-a162-fbc4dd53ffdd") {
                 newValues.fifth = message.value;
             }
 
