@@ -22,26 +22,31 @@ export default function Process() {
 
     useEffect(() => {
         if (message) {
-            // Получаем нужное значение из message (например, по id или name)
-            const newValues = { ...actualValues };
-
-            // Пример, как можно обновить значения на основе id или name сообщения
-            // Можно добавить больше условий в зависимости от того, что приходит в message
-            if (message.id === "36574620-1278-49cb-9dcf-fd2a34148aa2") {
-                newValues.first = message.value;
-            } else if (message.id === "1087010f-5f88-40a9-b7d0-dbaeb3ab3a2a") {
-                newValues.second = message.value;
-            } else if (message.id === "3c703a09-0889-44d6-949b-0996732470d2") {
-                newValues.third = message.value;
-            } else if (message.id === "976b3741-2f02-48fc-988c-53d86e3338fe") {
-                newValues.fourth = message.value;
-            } else if (message.id === "59f6f71b-3ede-4c63-a162-fbc4dd53ffdd") {
-                newValues.fifth = message.value;
-            }
-
-            setActualValues(newValues); // Обновляем состояние с новыми значениями
+            // Обновляем только конкретные значения в зависимости от id
+            setActualValues((prevValues) => ({
+                ...prevValues, // Сохраняем старые значения
+                [getFieldNameById(message.id)]: message.value, // Обновляем нужное поле
+            }));
         }
-    }, [message]); // Эффект срабатывает при изменении message
+    }, [message]);
+
+    // Функция для получения названия поля по id сообщения
+    const getFieldNameById = (id: string) => {
+        switch (id) {
+            case "36574620-1278-49cb-9dcf-fd2a34148aa2":
+                return "first";
+            case "1087010f-5f88-40a9-b7d0-dbaeb3ab3a2a":
+                return "second";
+            case "3c703a09-0889-44d6-949b-0996732470d2":
+                return "third";
+            case "976b3741-2f02-48fc-988c-53d86e3338fe":
+                return "fourth";
+            case "59f6f71b-3ede-4c63-a162-fbc4dd53ffdd":
+                return "fifth";
+            default:
+                return ""; // Если id не найдено, не обновляем
+        }
+    };
 
     return (
         <>
