@@ -10,6 +10,7 @@ import axios from "axios";
 export default function Auth() {
     const [loginValue, setLoginValue] = useState("");
     const [passwordValue, setPasswordValue] = useState("");
+    const token = localStorage.getItem("token");
 
     const loginHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         setLoginValue(e.target.value);
@@ -28,6 +29,11 @@ export default function Auth() {
         );
     };
 
+    const logout = () => {
+        localStorage.clear();
+        window.location.href = "http://localhost:9000/logout";
+    };
+
     return (
         <>
             <div className={classes.App}>
@@ -43,26 +49,34 @@ export default function Auth() {
                                 width: "100%",
                             }}
                         >
-                            <div className={classes.Wrapper}>
-                                <h1>
-                                    Для продолжения необходимо авторизоваться
-                                </h1>
-                                <a
-                                    style={{
-                                        width: "100%",
-                                        textAlign: "center",
-                                    }}
-                                    href="http://localhost:9000/oauth2/authorize?response_type=code&client_id=client&scope=openid&redirect_uri=http://localhost:3000/oauth2/callback"
-                                >
-                                    <Button
-                                        sx={{
+                            {!token ? (
+                                <div className={classes.Wrapper}>
+                                    <h1>
+                                        Для продолжения необходимо
+                                        авторизоваться
+                                    </h1>
+                                    <a
+                                        style={{
                                             width: "100%",
+                                            textAlign: "center",
                                         }}
+                                        href="http://localhost:9000/oauth2/authorize?response_type=code&client_id=client&scope=openid&redirect_uri=http://localhost:3000/oauth2/callback"
                                     >
-                                        Продолжить
-                                    </Button>
-                                </a>
-                            </div>
+                                        <Button
+                                            sx={{
+                                                width: "100%",
+                                            }}
+                                        >
+                                            Продолжить
+                                        </Button>
+                                    </a>
+                                </div>
+                            ) : (
+                                <div className={classes.Wrapper}>
+                                    <h1>Вы уже авторизованы</h1>
+                                    <Button onClick={logout}>Выйти</Button>
+                                </div>
+                            )}
                         </div>
                     </ContentLayout>
                 </div>
