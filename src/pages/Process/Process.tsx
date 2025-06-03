@@ -9,7 +9,6 @@ import techPic from "./img/techprocess.png";
 import { useEffect, useState } from "react";
 
 export default function Process() {
-    const isAlert = useSelector((state: RootState) => state.reference.isAlert);
     const sensors = useSelector((state: RootState) => state.reference.data);
     const message = useSelector((state: RootState) => state.reference.messages);
     const [actualValues, setActualValues] = useState({
@@ -50,7 +49,6 @@ export default function Process() {
 
     return (
         <>
-            {isAlert ? <Alert /> : null}
             <div className={classes.App}>
                 <LeftBar />
                 <div className={classes.RightContainer}>

@@ -6,9 +6,11 @@ import { ReactComponent as AddTrans } from "./img/addTrans.svg";
 import alertIcon from "./img/alertIcon.png";
 import Button from "../UI/Button/Button";
 import axios from "axios";
+import { readAlerts } from "../../slices/referenceValueSlice";
 
 function TopBar() {
     const [showSensors, setShowSensors] = useState(false);
+    const [showAlerts, setShowAlerts] = useState(false);
     const [sensorData, setSensorData] = useState<
         Array<{
             name: string;
@@ -16,6 +18,16 @@ function TopBar() {
             status: "GOOD" | "BAD" | "NOT_ACTIVE";
         }>
     >([]);
+    const alerts = useSelector((state: RootState) => state.reference.alerts);
+    const unreadCount = useSelector(
+        (state: RootState) => state.reference.unreadCount,
+    );
+    const dispatch = useDispatch();
+
+    const handleAlerts = () => {
+        setShowAlerts(!showAlerts);
+        dispatch(readAlerts());
+    };
 
     const checkSensors = async () => {
         const token = localStorage.getItem("token");
@@ -89,9 +101,39 @@ function TopBar() {
                 </div>
 
                 {!isLight ? (
-                    <a className={classes.Button}>
-                        <img src={alertIcon} alt="Alert" />
-                    </a>
+                    <div>
+                        <a className={classes.Button} onClick={handleAlerts}>
+                            <img src={alertIcon} alt="Alert" />
+                            {unreadCount > 0 && (
+                                <span className={classes.Badge}>
+                                    {unreadCount}
+                                </span>
+                            )}
+                        </a>
+                        {showAlerts && (
+                            <div className={classes.AlertDropdown}>
+                                {alerts.length === 0 ? (
+                                    <span>Нет уведомлений</span>
+                                ) : (
+                                    alerts.map((msg, index) => (
+                                        <div
+                                            key={index}
+                                            className={classes.AlertItem}
+                                        >
+                                            <strong>{msg.id}</strong> — значение{" "}
+                                            {msg.value}
+                                            <br />
+                                            <small>
+                                                {new Date(
+                                                    msg.time,
+                                                ).toLocaleString()}
+                                            </small>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        )}
+                    </div>
                 ) : null}
             </div>
         </div>

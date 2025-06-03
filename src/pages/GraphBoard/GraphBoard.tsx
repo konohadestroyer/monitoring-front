@@ -15,7 +15,7 @@ export default function GraphBoard() {
     const referenceValue = useSelector(
         (state: RootState) => state.reference.data,
     );
-    const isAlert = useSelector((state: RootState) => state.reference.isAlert);
+    const alerts = useSelector((state: RootState) => state.reference.alerts);
     const dispatch = useDispatch();
     const message = useSelector((state: RootState) => state.reference.messages);
 
@@ -44,13 +44,18 @@ export default function GraphBoard() {
 
             console.log(refValues);
 
+            const date = new Date(message.time);
+
+            // Преобразуем в строку с нужным форматом
+            const formattedDate = date.toLocaleString();
+
             // Если пришедшее сообщение не совпадает с текущим значением, показываем alert
             if (refValues[message.id]?.val !== message.value) {
                 dispatch(
                     setAlert({
-                        isOn: true,
-                        sensor:
-                            refValues[message.id]?.name || "Неизвестный датчик",
+                        id: message.id,
+                        value: message.value,
+                        time: formattedDate,
                     }),
                 );
             }
@@ -64,7 +69,6 @@ export default function GraphBoard() {
 
     return (
         <>
-            {isAlert ? <Alert /> : null}
             <div className={classes.App}>
                 <LeftBar />
                 <div className={classes.RightContainer}>

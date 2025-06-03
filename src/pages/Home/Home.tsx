@@ -10,7 +10,6 @@ import { setAlert } from "../../slices/referenceValueSlice";
 import Alert from "../../components/Alert/Alert";
 
 export default function Home() {
-    const isAlert = useSelector((state: RootState) => state.reference.isAlert);
     const message = useSelector((state: RootState) => state.reference.messages);
     const referenceValue = useSelector(
         (state: RootState) => state.reference.data,
@@ -54,7 +53,6 @@ export default function Home() {
 
     return (
         <>
-            {isAlert ? <Alert /> : null}
             <div className={classes.App}>
                 <LeftBar />
                 <div className={classes.RightContainer}>

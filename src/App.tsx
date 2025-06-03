@@ -34,6 +34,9 @@ function App() {
     const dispatch = useDispatch();
     const token = localStorage.getItem("token") ?? "";
     const sensors = useSelector((state: RootState) => state.reference.data);
+    const alerts = useSelector((state: RootState) => state.reference.alerts);
+
+    console.log("alerts", alerts);
 
     useEffect(() => {
         const socket = new WebSocket(

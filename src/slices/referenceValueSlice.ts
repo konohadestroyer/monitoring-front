@@ -4,8 +4,8 @@ import { Journal } from "../components/Graph/Graph";
 interface ReferenceValueState {
     data: ReferenceValueInterface[];
     messages: Journal;
-    isAlert: boolean;
-    alertMessage: string;
+    alerts: Array<{ id: string; value: string; time: string }>;
+    unreadCount: number;
 }
 
 interface ReferenceValueInterface {
@@ -17,11 +17,11 @@ interface ReferenceValueInterface {
 
 const initialState: ReferenceValueState = {
     data: [],
+    alerts: [],
+    unreadCount: 0,
     messages: {
         time: "",
     },
-    isAlert: false,
-    alertMessage: "",
 };
 
 const referenceValueSlice = createSlice({
@@ -39,12 +39,20 @@ const referenceValueSlice = createSlice({
             state.messages.time = time;
         },
         setAlert: (state, action) => {
-            state.isAlert = action.payload.isOn;
-            state.alertMessage = action.payload.sensor;
+            if (!action.payload.id) return;
+            state.alerts.push({
+                id: action.payload.id,
+                value: action.payload.value,
+                time: action.payload.time,
+            });
+            state.unreadCount += 1;
+        },
+        readAlerts: (state) => {
+            state.unreadCount = 0;
         },
     },
 });
 
-export const { setReferenceValues, setMessages, setAlert } =
+export const { setReferenceValues, setMessages, setAlert, readAlerts } =
     referenceValueSlice.actions;
 export default referenceValueSlice.reducer;

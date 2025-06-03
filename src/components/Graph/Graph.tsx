@@ -25,7 +25,6 @@ interface GraphProps {
 
 export default function Graph({ name, id, reference, testdata }: GraphProps) {
     const message = useSelector((state: RootState) => state.reference.messages);
-    console.log(message);
 
     const [journal, setJournal] = useState<Journal[]>([]);
     const [zoom, setZoom] = useState<{
@@ -64,9 +63,6 @@ export default function Graph({ name, id, reference, testdata }: GraphProps) {
     }, []);
 
     useEffect(() => {
-        console.log("effect worked");
-        console.log(message.id, id);
-
         if (!message) return;
         if (message.id === id) {
             console.log("new mess", message.id);
