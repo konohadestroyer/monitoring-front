@@ -8,31 +8,7 @@ import Button from "../../components/UI/Button/Button";
 import axios from "axios";
 
 export default function Auth() {
-    const [loginValue, setLoginValue] = useState("");
-    const [passwordValue, setPasswordValue] = useState("");
     const token = localStorage.getItem("token");
-
-    const loginHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setLoginValue(e.target.value);
-    };
-    const passwordHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setPasswordValue(e.target.value);
-    };
-
-    const sendToOauth = () => {
-        axios.post(
-            "http://localhost:9000/oauth2/authorize?response_type=code&client_id=client&scope=openid&redirect_uri=http://localhost:9000/oauth2/callback",
-            {
-                username: loginValue,
-                password: passwordValue,
-            },
-        );
-    };
-
-    const logout = () => {
-        localStorage.clear();
-        window.location.href = "http://localhost:9000/logout";
-    };
 
     return (
         <>
@@ -74,7 +50,16 @@ export default function Auth() {
                             ) : (
                                 <div className={classes.Wrapper}>
                                     <h1>Вы уже авторизованы</h1>
-                                    <Button onClick={logout}>Выйти</Button>
+                                    <form
+                                        action="http://localhost:9000/logout"
+                                        method="POST"
+                                    >
+                                        <Button
+                                            onClick={() => localStorage.clear()}
+                                        >
+                                            Выйти
+                                        </Button>
+                                    </form>
                                 </div>
                             )}
                         </div>
